@@ -1,5 +1,6 @@
 package mxh.mileageplanner;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -18,7 +19,7 @@ public class Week {
         for (int i = 0; i < numWeeks; i++) {
             int[] dailyMiles = new int[7];
             for (int j = 0; j < 7; j++) {
-                dailyMiles[j] = r.nextInt(15);
+                dailyMiles[j] = r.nextInt(10);
             }
 
             weeks.add(new Week(dailyMiles));
@@ -33,5 +34,16 @@ public class Week {
 
     public int getTotalMiles() {
         return Arrays.stream(mDailyMiles).sum();
+    }
+
+    public String getPercentChange(Week otherWeek) {
+        float otherWeekTotal = (float) otherWeek.getTotalMiles();
+        float thisWeekTotal = (float) this.getTotalMiles();
+        float change = (thisWeekTotal - otherWeekTotal) / otherWeekTotal;
+
+        NumberFormat defaultFormat = NumberFormat.getPercentInstance();
+        defaultFormat.setMinimumFractionDigits(1);
+        defaultFormat.setMaximumFractionDigits(1);
+        return defaultFormat.format(change);
     }
 }

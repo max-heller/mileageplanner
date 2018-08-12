@@ -2,6 +2,7 @@ package mxh.mileageplanner;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -21,6 +22,11 @@ public class MainActivity extends AppCompatActivity {
         weeks = Week.createMileageTimeline(50);
         WeeksAdapter adapter = new WeeksAdapter(weeks);
         rvWeeks.setAdapter(adapter);
+
         rvWeeks.setLayoutManager(new LinearLayoutManager(this));
+
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        rvWeeks.addItemDecoration(itemDecoration);
     }
 }

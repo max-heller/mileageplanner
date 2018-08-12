@@ -39,6 +39,16 @@ public class WeeksAdapter extends RecyclerView.Adapter<WeeksAdapter.ViewHolder> 
         viewHolder.fridayTextView.setText(String.valueOf(week.getDailyMiles()[4]));
         viewHolder.saturdayTextView.setText(String.valueOf(week.getDailyMiles()[5]));
         viewHolder.sundayTextView.setText(String.valueOf(week.getDailyMiles()[6]));
+
+        viewHolder.totalTextView.setText(String.format("Total: %dmi", week.getTotalMiles()));
+
+        if (position == 0) {
+            viewHolder.changeTextView.setText("Change: N/A");
+        } else {
+            Week lastWeek = mWeeks.get(position - 1);
+            String percentChange = week.getPercentChange(lastWeek);
+            viewHolder.changeTextView.setText(String.format("Change: %s", percentChange));
+        }
     }
 
     @Override
@@ -55,6 +65,9 @@ public class WeeksAdapter extends RecyclerView.Adapter<WeeksAdapter.ViewHolder> 
         public TextView saturdayTextView;
         public TextView sundayTextView;
 
+        public TextView totalTextView;
+        public TextView changeTextView;
+
         public ViewHolder(View itemView) {
             super(itemView);
 
@@ -65,6 +78,9 @@ public class WeeksAdapter extends RecyclerView.Adapter<WeeksAdapter.ViewHolder> 
             fridayTextView = itemView.findViewById(R.id.tvFriday);
             saturdayTextView = itemView.findViewById(R.id.tvSaturday);
             sundayTextView = itemView.findViewById(R.id.tvSunday);
+
+            totalTextView = itemView.findViewById(R.id.tvTotal);
+            changeTextView = itemView.findViewById(R.id.tvChange);
         }
     }
 }
