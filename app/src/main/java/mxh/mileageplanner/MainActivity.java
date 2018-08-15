@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 
 import java.util.ArrayList;
 
@@ -19,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView rvWeeks = findViewById(R.id.rvWeeks);
 
-        weeks = Week.createMileageTimeline(50);
+        weeks = Week.createMileageTimeline(25);
         WeeksAdapter adapter = new WeeksAdapter(weeks);
         rvWeeks.setAdapter(adapter);
 
@@ -28,5 +30,8 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         rvWeeks.addItemDecoration(itemDecoration);
+
+        SnapHelper snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(rvWeeks);
     }
 }

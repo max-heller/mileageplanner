@@ -46,4 +46,8 @@ public class Week {
         defaultFormat.setMaximumFractionDigits(1);
         return defaultFormat.format(change);
     }
+
+    public void updateDay(int idx, int newVal) {
+        mDailyMiles[idx] = newVal;
+    }
 }
