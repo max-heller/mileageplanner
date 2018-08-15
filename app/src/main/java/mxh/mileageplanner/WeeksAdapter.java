@@ -40,38 +40,7 @@ public class WeeksAdapter extends RecyclerView.Adapter<WeeksAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(final WeeksAdapter.ViewHolder viewHolder, final int position) {
         final Week week = mWeeks.get(position);
-        final int[] dailyMiles = week.getDailyMiles();
-
-        viewHolder.weekTextView.setText(String.format("Week %d", position));
-        viewHolder.totalTextView.setText(String.format("Total: %dmi", week.getTotalMiles()));
-
-        if (position == 0) {
-            viewHolder.changeTextView.setText("Change: N/A");
-        } else {
-            Week lastWeek = mWeeks.get(position - 1);
-            String percentChange = week.getPercentChange(lastWeek);
-            viewHolder.changeTextView.setText(String.format("Change: %s", percentChange));
-        }
-
-        for (int i = 0; i < 7; i++) {
-            final int dayIdx = i;
-            NumberPicker np = viewHolder.numberPickers.get(i);
-            np.setValue(dailyMiles[i]);
-            np.setOnScrollListener(new NumberPicker.OnScrollListener() {
-                @Override
-                public void onScrollStateChange(NumberPicker numberPicker, int scrollState) {
-                    if (scrollState == SCROLL_STATE_IDLE) {
-                        week.updateDay(dayIdx, numberPicker.getValue());
-                        mRecyclerView.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                notifyItemRangeChanged(position, position + 1);
-                            }
-                        });
-                    }
-                }
-            });
-        }
+        viewHolder.setWeek(week, position);
     }
 
     @Override
@@ -86,6 +55,9 @@ public class WeeksAdapter extends RecyclerView.Adapter<WeeksAdapter.ViewHolder> 
         public TextView totalTextView;
         public TextView changeTextView;
 
+        Week week;
+        int position;
+
         public ViewHolder(View itemView) {
             super(itemView);
 
@@ -97,16 +69,53 @@ public class WeeksAdapter extends RecyclerView.Adapter<WeeksAdapter.ViewHolder> 
             numberPickers.add((NumberPicker) itemView.findViewById(R.id.npSaturday));
             numberPickers.add((NumberPicker) itemView.findViewById(R.id.npSunday));
 
+            weekTextView = itemView.findViewById(R.id.tvWeek);
+            totalTextView = itemView.findViewById(R.id.tvTotal);
+            changeTextView = itemView.findViewById(R.id.tvChange);
+
             for (int i = 0; i < 7; i++) {
+                final int dayIdx = i;
                 NumberPicker np = numberPickers.get(i);
                 np.setMinValue(0);
                 np.setMaxValue(150);
                 np.setWrapSelectorWheel(false);
+                np.setOnScrollListener(new NumberPicker.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChange(NumberPicker numberPicker, int scrollState) {
+                        if (scrollState == SCROLL_STATE_IDLE) {
+                            week.updateDay(dayIdx, numberPicker.getValue());
+                            mRecyclerView.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    notifyItemRangeChanged(position, position + 1);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        }
+
+        public void setWeek(Week week, int position) {
+            this.week = week;
+            this.position = position;
+
+            final int[] dailyMiles = week.getDailyMiles();
+
+            weekTextView.setText(String.format("Week %d", position));
+            totalTextView.setText(String.format("Total: %dmi", week.getTotalMiles()));
+
+            if (position == 0) {
+                changeTextView.setText("Change: N/A");
+            } else {
+                Week lastWeek = mWeeks.get(position - 1);
+                String percentChange = week.getPercentChange(lastWeek);
+                changeTextView.setText(String.format("Change: %s", percentChange));
             }
 
-            weekTextView = itemView.findViewById(R.id.tvWeek);
-            totalTextView = itemView.findViewById(R.id.tvTotal);
-            changeTextView = itemView.findViewById(R.id.tvChange);
+            for (int i = 0; i < 7; i++) {
+                numberPickers.get(i).setValue(dailyMiles[i]);
+            }
         }
     }
 }
