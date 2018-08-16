@@ -13,10 +13,12 @@ import java.util.List;
 
 public class WeeksAdapter extends RecyclerView.Adapter<WeeksAdapter.ViewHolder> {
 
+    private long mCalID;
     private List<Week> mWeeks;
     private RecyclerView mRecyclerView;
 
-    public WeeksAdapter(List<Week> weeks) {
+    public WeeksAdapter(List<Week> weeks, long calID) {
+        mCalID = calID;
         mWeeks = weeks;
     }
 
