@@ -13,12 +13,10 @@ import java.util.List;
 
 public class WeeksAdapter extends RecyclerView.Adapter<WeeksAdapter.ViewHolder> {
 
-    private long mCalID;
     private List<Week> mWeeks;
     private RecyclerView mRecyclerView;
 
-    public WeeksAdapter(List<Week> weeks, long calID) {
-        mCalID = calID;
+    WeeksAdapter(List<Week> weeks) {
         mWeeks = weeks;
     }
 
@@ -35,8 +33,7 @@ public class WeeksAdapter extends RecyclerView.Adapter<WeeksAdapter.ViewHolder> 
 
         View weekView = inflater.inflate(R.layout.item_week, parent, false);
 
-        ViewHolder viewHolder = new ViewHolder(weekView);
-        return viewHolder;
+        return new ViewHolder(weekView);
     }
 
     @Override
@@ -50,17 +47,17 @@ public class WeeksAdapter extends RecyclerView.Adapter<WeeksAdapter.ViewHolder> 
         return mWeeks.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public ArrayList<NumberPicker> numberPickers = new ArrayList<>();
+    class ViewHolder extends RecyclerView.ViewHolder {
+        ArrayList<NumberPicker> numberPickers = new ArrayList<>();
 
-        public TextView weekTextView;
-        public TextView totalTextView;
-        public TextView changeTextView;
+        TextView weekTextView;
+        TextView totalTextView;
+        TextView changeTextView;
 
         Week week;
         int position;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
 
             numberPickers.add((NumberPicker) itemView.findViewById(R.id.npMonday));
@@ -98,7 +95,7 @@ public class WeeksAdapter extends RecyclerView.Adapter<WeeksAdapter.ViewHolder> 
             }
         }
 
-        public void setWeek(Week week, int position) {
+        void setWeek(Week week, int position) {
             this.week = week;
             this.position = position;
 

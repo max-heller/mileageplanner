@@ -3,37 +3,44 @@ package mxh.mileageplanner;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
+import java.util.Calendar;
 
 public class Week {
-    private int[] mDailyMiles;
 
-    public Week(int[] dailyMiles) {
-        mDailyMiles = dailyMiles;
+    private ArrayList<Day> mDays;
+
+    private Week(MyCalendar myCalendar) {
+        Calendar day = Calendar.getInstance();
+        day.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        day.set(Calendar.HOUR_OF_DAY, 0);
+        day.clear(Calendar.MINUTE);
+        day.clear(Calendar.SECOND);
+        day.clear(Calendar.MILLISECOND);
+        mDays = new ArrayList<>(7);
+        for (int i = 0; i < 7; i++) {
+            mDays.add(new Day(myCalendar, day));
+            day.add(Calendar.DATE, 1);
+        }
     }
 
-    public static ArrayList<Week> createMileageTimeline(int numWeeks) {
-        ArrayList<Week> weeks = new ArrayList<Week>();
-        Random r = new Random();
-
+    public static ArrayList<Week> createMileageTimeline(MyCalendar myCalendar, int numWeeks) {
+        ArrayList<Week> weeks = new ArrayList<>(numWeeks);
         for (int i = 0; i < numWeeks; i++) {
-            int[] dailyMiles = new int[7];
-            for (int j = 0; j < 7; j++) {
-                dailyMiles[j] = r.nextInt(10);
-            }
-
-            weeks.add(new Week(dailyMiles));
+            weeks.add(new Week(myCalendar));
         }
-
         return weeks;
     }
 
     public int[] getDailyMiles() {
-        return mDailyMiles;
+        int[] dailyMiles = new int[7];
+        for (int i = 0, j = mDays.size(); i < j; i++) {
+            dailyMiles[i] = mDays.get(i).getMiles();
+        }
+        return dailyMiles;
     }
 
     public int getTotalMiles() {
-        return Arrays.stream(mDailyMiles).sum();
+        return Arrays.stream(this.getDailyMiles()).sum();
     }
 
     public String getPercentChange(Week otherWeek) {
@@ -48,6 +55,6 @@ public class Week {
     }
 
     public void updateDay(int idx, int newVal) {
-        mDailyMiles[idx] = newVal;
+        mDays.get(idx).setMiles(newVal);
     }
 }
