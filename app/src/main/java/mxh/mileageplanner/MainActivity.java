@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         MyCalendar myCalendar = new MyCalendar(getContentResolver(),
                 "heller.max1@gmail.com", "Routine");
 
-        weeks = Week.createMileageTimeline(myCalendar, 1);
+        weeks = Week.createMileageTimeline(myCalendar, 5);
         WeeksAdapter adapter = new WeeksAdapter(weeks);
         rvWeeks.setAdapter(adapter);
 

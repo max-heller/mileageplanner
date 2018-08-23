@@ -7,8 +7,10 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.net.Uri;
 import android.provider.CalendarContract;
+import android.util.Log;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class MyCalendar {
@@ -46,6 +48,7 @@ public class MyCalendar {
 
     public long saveRun(Calendar day, int distance) {
         long startMillis = day.getTimeInMillis();
+        Log.d("Day", "Saving at time: " + String.valueOf(startMillis));
         long endMillis = startMillis + TimeUnit.DAYS.toMillis(1);
 
         ContentValues values = new ContentValues();
@@ -70,28 +73,46 @@ public class MyCalendar {
     }
 
     public RunEntry findRun(Calendar day) {
+        Log.d("MyCalendar", "Looking for existing event");
         String[] mProjection = new String[]{
                 CalendarContract.Events._ID,
                 CalendarContract.Events.TITLE,
+                CalendarContract.Events.DTSTART
         };
 
         Uri uri = CalendarContract.Events.CONTENT_URI;
-        String selection = "((" + CalendarContract.Events.DESCRIPTION + " = ?) AND ("
-                + CalendarContract.Events.DTSTART + " = ?))";
-        String[] selectionArgs = new String[]{"Mileage Planner", String.valueOf(day.getTimeInMillis())};
-        Cursor cur = this.cr.query(uri, mProjection, selection, selectionArgs, null);
-
+        String selection = "(("
+                + CalendarContract.Events.DESCRIPTION + " = ?) AND ("
+                + CalendarContract.Events.CALENDAR_ID + " = ?) AND ("
+                + CalendarContract.Events.DTSTART + " = ?) AND ("
+                + CalendarContract.Events.DTEND + " = ?))";
+        long startMillis = day.getTimeInMillis();
+        TimeZone tz = day.getTimeZone();
+        long offsetFromUTC = tz.getOffset(startMillis);
+        startMillis += offsetFromUTC;
+        Log.d("Day", "Finding event at time: " + String.valueOf(startMillis));
+        long endMillis = startMillis + TimeUnit.DAYS.toMillis(1);
+        String[] selectionArgs = new String[]{
+                "Mileage Planner",
+                String.valueOf(calID),
+                String.valueOf(startMillis),
+                String.valueOf(endMillis)};
+        Cursor cur = cr.query(uri, mProjection, selection, selectionArgs, null);
         try {
             cur.moveToNext();
             long eventID = cur.getLong(cur.getColumnIndex(CalendarContract.Events._ID));
+            Log.d("MyCalendar", "Found event with id: " + String.valueOf(eventID));
             int miles;
             try {
                 miles = Integer.parseInt(cur.getString(cur.getColumnIndex(CalendarContract.Events.TITLE)));
             } catch (NumberFormatException err) {
                 miles = 0;
             }
+            cur.close();
             return new RunEntry(eventID, miles);
         } catch (CursorIndexOutOfBoundsException err) {
+            Log.d("MyCalendar", "No search results: " + err);
+            cur.close();
             return null;
         }
     }

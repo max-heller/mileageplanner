@@ -9,13 +9,8 @@ public class Week {
 
     private ArrayList<Day> mDays;
 
-    private Week(MyCalendar myCalendar) {
-        Calendar day = Calendar.getInstance();
-        day.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        day.set(Calendar.HOUR_OF_DAY, 0);
-        day.clear(Calendar.MINUTE);
-        day.clear(Calendar.SECOND);
-        day.clear(Calendar.MILLISECOND);
+    private Week(MyCalendar myCalendar, Calendar startDay) {
+        Calendar day = startDay;
         mDays = new ArrayList<>(7);
         for (int i = 0; i < 7; i++) {
             mDays.add(new Day(myCalendar, day));
@@ -25,8 +20,14 @@ public class Week {
 
     public static ArrayList<Week> createMileageTimeline(MyCalendar myCalendar, int numWeeks) {
         ArrayList<Week> weeks = new ArrayList<>(numWeeks);
+        Calendar day = Calendar.getInstance();
+        day.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        day.set(Calendar.HOUR_OF_DAY, 0);
+        day.set(Calendar.MINUTE, 0);
+        day.set(Calendar.SECOND, 0);
+        day.set(Calendar.MILLISECOND, 0);
         for (int i = 0; i < numWeeks; i++) {
-            weeks.add(new Week(myCalendar));
+            weeks.add(new Week(myCalendar, day));
         }
         return weeks;
     }
