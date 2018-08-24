@@ -9,12 +9,17 @@ public class Day {
     private long eventID;
 
     Day(MyCalendar myCalendar, Calendar date) {
+        // store instance of calendar helper class
         myCal = myCalendar;
+
+        // look for existing run in calendar
         MyCalendar.RunEntry run = myCalendar.findRun(date);
         if (run == null) {
+            // create a new run event in the calendar if one doesn't exist
             miles = 0;
             eventID = myCalendar.saveRun(date, miles);
         } else {
+            // use the existing calendar event
             miles = run.getMiles();
             eventID = run.getEventID();
         }
@@ -26,6 +31,8 @@ public class Day {
 
     public void setMiles(int miles) {
         this.miles = miles;
+
+        // update the calendar event
         myCal.updateRun(this.eventID, miles);
     }
 }
