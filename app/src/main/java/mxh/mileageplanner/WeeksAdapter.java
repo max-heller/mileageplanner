@@ -101,15 +101,20 @@ public class WeeksAdapter extends RecyclerView.Adapter<WeeksAdapter.ViewHolder> 
 
             final int[] dailyMiles = week.getDailyMiles();
 
-            weekTextView.setText(String.format("Week %d", position));
             totalTextView.setText(String.format("Total: %dmi", week.getTotalMiles()));
 
             if (position == 0) {
+                weekTextView.setText("This Week");
                 changeTextView.setText("Change: N/A");
             } else {
                 Week lastWeek = mWeeks.get(position - 1);
                 String percentChange = week.getPercentChange(lastWeek);
                 changeTextView.setText(String.format("Change: %s", percentChange));
+                if (position == 1) {
+                    weekTextView.setText("Next Week");
+                } else {
+                    weekTextView.setText(String.format("%d Weeks from Now", position));
+                }
             }
 
             for (int i = 0; i < 7; i++) {
